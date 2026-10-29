@@ -39,12 +39,14 @@ SNSPD_T2K_THERM_CH="1"                # Thermometer input of the 2 K stage
 SNSPD_T2K_CAL="T160.cal"              # Calibration curve of the 2 K stage
 SNSPD_T40K_THERM_CH="0"               # Thermometer input of the 40 K stage
 SNSPD_T40K_CAL="T159.cal"             # Calibration curve of the 40 K stage
-SNSPD_MAX_BIAS_UA="1=12,2=12"         # Per-channel bias limits in uA (hard ceiling 50)
+SNSPD_MAX_BIAS_UA=""                  # Required: per-channel bias limits in uA from the unit's datasheet
 SNSPD_BIAS_RAMP_STEP_UA="0.5"         # Largest single bias step in uA
 SNSPD_MAX_OPERATING_T_K="3.5"         # Refuse nonzero bias above this 2 K stage temperature (0 disables)
 SNSPD_POLL_INTERVAL_S="5"             # Background temperature/count poll period in seconds
 SNSPD_LOG_DIR=""                      # Host directory for daily <name>_log_<date>.dat files (empty: off)
 ```
+
+`SNSPD_MAX_BIAS_UA` has no default because the limits differ between SNSPD units. Take them from your unit's datasheet, for example `1=12.2,2=12.1`. `run.sh` refuses to start without them (the virtual driver doesn't need them). The agent never sets a bias above the limit: when a request is at the limit, it rounds down to the DAC step below it (about 0.049 uA steps) instead of to the nearest step.
 
 When `SNSPD_DRIVER_TYPE=opus`, the QOELEC is passed through to the container (`--device` + `dialout` group) at its resolved device path. With `SNSPD_DRIVER_TYPE=virtual`, no hardware is required, which is useful for testing the deployment.
 
@@ -53,13 +55,13 @@ Make the script executable and run it:
 
 ```bash
 chmod +x run.sh
-SNSPD_TTY=/dev/serial/by-id/usb-<qoelec-id>-if00 ./run.sh
+SNSPD_TTY=/dev/serial/by-id/usb-<qoelec-id>-if00 SNSPD_MAX_BIAS_UA="1=12.2,2=12.1" ./run.sh
 ```
 
 To keep the daily log files the old logger wrote:
 
 ```bash
-SNSPD_TTY=/dev/serial/by-id/usb-<qoelec-id>-if00 SNSPD_LOG_DIR=$HOME/snspd-logs ./run.sh
+SNSPD_TTY=/dev/serial/by-id/usb-<qoelec-id>-if00 SNSPD_MAX_BIAS_UA="1=12.2,2=12.1" SNSPD_LOG_DIR=$HOME/snspd-logs ./run.sh
 ```
 
 To run against a simulated module instead of real hardware:

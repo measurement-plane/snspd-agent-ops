@@ -13,11 +13,19 @@ SNSPD_T2K_THERM_CH="${SNSPD_T2K_THERM_CH:-1}"
 SNSPD_T2K_CAL="${SNSPD_T2K_CAL:-T160.cal}"
 SNSPD_T40K_THERM_CH="${SNSPD_T40K_THERM_CH:-0}"
 SNSPD_T40K_CAL="${SNSPD_T40K_CAL:-T159.cal}"
-SNSPD_MAX_BIAS_UA="${SNSPD_MAX_BIAS_UA:-1=12,2=12}"
+# Required for real hardware: per-channel bias limits in uA from this unit's datasheet,
+# e.g. "1=12.2,2=12.1". Limits differ between units, so there is no default.
+SNSPD_MAX_BIAS_UA="${SNSPD_MAX_BIAS_UA:-}"
 SNSPD_BIAS_RAMP_STEP_UA="${SNSPD_BIAS_RAMP_STEP_UA:-0.5}"
 SNSPD_MAX_OPERATING_T_K="${SNSPD_MAX_OPERATING_T_K:-3.5}"
 SNSPD_POLL_INTERVAL_S="${SNSPD_POLL_INTERVAL_S:-5}"
 SNSPD_LOG_DIR="${SNSPD_LOG_DIR:-}"
+
+# Checked before the running container is touched.
+if [ "$SNSPD_DRIVER_TYPE" != "virtual" ] && [ -z "$SNSPD_MAX_BIAS_UA" ]; then
+    echo "Error: set SNSPD_MAX_BIAS_UA to this SNSPD unit's per-channel bias limits in uA from its datasheet, e.g. SNSPD_MAX_BIAS_UA=1=12.2,2=12.1. Exiting."
+    exit 1
+fi
 
 # Only pass the QOELEC through when talking to real hardware; the 'virtual'
 # driver needs no device access. The device is mapped to its resolved path
