@@ -35,10 +35,10 @@ SNSPD_NAME="Fury"                     # Name used in log file names
 SNSPD_DRIVER_TYPE="opus"              # 'opus' (real hardware) or 'virtual' (simulated)
 SNSPD_TTY="/dev/ttyACM0"              # QOELEC serial device (prefer the /dev/serial/by-id path)
 SNSPD_SERIAL=""                       # QOELEC USB serial number; empty uses the first one found
-SNSPD_T2K_THERM_CH="0"                # Thermometer input of the 2 K stage
-SNSPD_T2K_CAL="T159.cal"              # Calibration curve of the 2 K stage
-SNSPD_T40K_THERM_CH="1"               # Thermometer input of the 40 K stage
-SNSPD_T40K_CAL="T160.cal"             # Calibration curve of the 40 K stage
+SNSPD_T2K_THERM_CH="1"                # Thermometer input of the 2 K stage
+SNSPD_T2K_CAL="T160.cal"              # Calibration curve of the 2 K stage
+SNSPD_T40K_THERM_CH="0"               # Thermometer input of the 40 K stage
+SNSPD_T40K_CAL="T159.cal"             # Calibration curve of the 40 K stage
 SNSPD_MAX_BIAS_UA="1=12,2=12"         # Per-channel bias limits in uA (hard ceiling 50)
 SNSPD_BIAS_RAMP_STEP_UA="0.5"         # Largest single bias step in uA
 SNSPD_MAX_OPERATING_T_K="3.5"         # Refuse nonzero bias above this 2 K stage temperature (0 disables)
@@ -77,7 +77,7 @@ docker logs -f snspd_agent
 ## After Deploying
 
 - Read the temperatures and the current bias before setting any bias.
-- Check that `T2K` reads about 1.7 K and `T40K` about 30 K when the system is cold. If they are swapped, exchange the `SNSPD_T2K_*` and `SNSPD_T40K_*` settings.
+- Check that `T2K` reads about 1.7 K and `T40K` about 30 K when the system is cold. If they are swapped, exchange the `SNSPD_T2K_*` and `SNSPD_T40K_*` settings, moving each `.cal` file together with its input.
 - Restarting the container does not change the detector bias.
 
 ### Notes
